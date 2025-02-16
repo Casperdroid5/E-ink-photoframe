@@ -163,31 +163,35 @@ void loop() {
     EIMSK |= _BV(INT0);
   } else if (bWDT) {
     bWDT = false;
-
+    
     if (sleepCycles > 0) {
-      sleepCycles--;
+        sleepCycles--;
+        Serial.print(F("Sleep cycles left: "));
+        Serial.println(sleepCycles);
+        digitalWrite(PIN_MOSFET, LOW);  // Ensure power is off
+        return;  // Go back to sleep
     } else {
-      digitalWrite(PIN_MOSFET, HIGH);
-      delay(100);
+        digitalWrite(PIN_MOSFET, HIGH);
+        delay(100);
 
-      // Reinitialize SD card
-      if (!initSD()) {
-        Serial.println(F("SD reinit failed!"));
-        digitalWrite(PIN_MOSFET, LOW);
-        return;
-      }
+        // Reinitialize SD card
+        if (!initSD()) {
+            Serial.println(F("SD reinit failed!"));
+            digitalWrite(PIN_MOSFET, LOW);
+            return;
+        }
 
-      do {
-        idxBitmap++;
-        if (idxBitmap > NUM_BITMAPS) idxBitmap = 1;
-        sprintf(szBitmapName, "%d.bmp", idxBitmap);
-        Serial.print(F("Trying file: "));
-        Serial.println(szBitmapName);
-      } while (!drawBitmapFromSD(szBitmapName, w2, h2));
+        do {
+            idxBitmap++;
+            if (idxBitmap > NUM_BITMAPS) idxBitmap = 1;
+            sprintf(szBitmapName, "%d.bmp", idxBitmap);
+            Serial.print(F("Trying file: "));
+            Serial.println(szBitmapName);
+        } while (!drawBitmapFromSD(szBitmapName, w2, h2));
 
-      sleepCycles = K_SLEEPCYCLES;
+        sleepCycles = K_SLEEPCYCLES;
     }
-  }
+}
 
   digitalWrite(PIN_MOSFET, LOW);
 
