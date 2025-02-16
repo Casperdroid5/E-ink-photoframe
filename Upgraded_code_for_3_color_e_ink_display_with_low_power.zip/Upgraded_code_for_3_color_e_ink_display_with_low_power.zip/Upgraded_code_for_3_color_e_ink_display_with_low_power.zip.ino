@@ -133,6 +133,12 @@ void setup() {
     Serial.println(F("Initial image drawn"));
   }
 
+  // Add these lines here
+  bWDT = false;  // Make sure WDT flag is clear
+  bINT0 = false; // Make sure interrupt flag is clear
+  sleepCycles = K_SLEEPCYCLES;
+  idxBitmap = 1;  // Reset bitmap index
+
   Serial.println(F("Setup complete"));
 }
 
